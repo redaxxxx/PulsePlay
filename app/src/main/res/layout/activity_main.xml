@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity"
+        android:background="@drawable/mc">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:menu="@menu/search_btn"
+                app:titleTextColor="?attr/colorOnPrimary" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/songsRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+            android:paddingBottom="4dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/homeControlWrapper"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="?attr/colorPrimary">
+
+            <ImageView
+                android:id="@+id/ic_audioTrack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:paddingEnd="4dp"
+                app:srcCompat="@drawable/baseline_audiotrack_24"
+                tools:ignore="RtlSymmetry"/>
+
+            <TextView
+                android:id="@+id/homeSongName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/ic_audioTrack"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="current playing song"
+                app:layout_constraintWidth_percent="0.6"
+                app:layout_constraintHorizontal_bias="0"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:marqueeRepeatLimit="marquee_forever"/>
+
+            <ImageView
+                android:id="@+id/skipPreviousBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/baseline_skip_previous_24"
+                app:layout_constraintWidth_percent=".1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/homeSongName"/>
+
+            <ImageView
+                android:id="@+id/playBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/baseline_play_arrow_24"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.1"
+                app:layout_constraintStart_toEndOf="@id/skipPreviousBtn"/>
+
+            <ImageView
+                android:id="@+id/skipNext_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/baseline_skip_next_24"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.1"
+                app:layout_constraintStart_toEndOf="@id/playBtn"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--include player view layout -->
+        <include
+            android:id="@+id/playerView"
+            layout="@layout/player_view"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

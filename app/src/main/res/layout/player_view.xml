@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary_color"
+        android:elevation="100dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/blurImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/app_name" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/headWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0">
+
+            <ImageView
+                android:id="@+id/arrowBackBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/arrow_back_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:paddingStart="8dp" />
+
+            <TextView
+                android:id="@+id/songNameText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/arrowBackBtn"
+                app:layout_constraintBottom_toBottomOf="@id/arrowBackBtn"
+                app:layout_constraintStart_toEndOf="@id/arrowBackBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.1"
+                android:text="current playing song"
+                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:gravity="center_vertical"
+                android:ellipsize="marquee" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/artworkWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/headWrapper"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_percent="0.4"
+            app:layout_constraintVertical_bias="0">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/artworkView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/art_mc"
+                app:civ_border_overlay="true"
+                app:civ_border_color="@color/primary_color"
+                app:civ_border_width="2dp"
+                android:padding="4dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/seekbar_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/artworkWrapper"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_percent="0.09"
+            app:layout_constraintVertical_bias="0"
+            android:paddingHorizontal="8dp">
+
+            <SeekBar
+                android:id="@+id/seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                style="@style/Widget.AppCompat.SeekBar" />
+
+            <TextView
+                android:id="@+id/startProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/seekbar"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp"
+                android:text="0:0"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/endProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/seekbar"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp"
+                android:text="3:15"
+                android:textColor="@color/white" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/controlWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/seekbar_wrapper"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0"
+            android:layout_marginHorizontal="8dp">
+
+            <ImageView
+                android:id="@+id/repeatBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/baseline_repeat_24"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:padding="8dp" />
+
+            <ImageView
+                android:id="@+id/skipPrevious_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/baseline_skip_previous_24"
+                app:layout_constraintEnd_toStartOf="@id/play_pauseBtn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="4dp"
+                android:padding="4dp" />
+
+            <ImageView
+                android:id="@+id/play_pauseBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/baseline_play_circle_outline_24"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageView
+                android:id="@+id/skipNext_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/baseline_skip_next_24"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/play_pauseBtn"
+                android:layout_marginStart="4dp"
+                android:padding="4dp" />
+
+            <ImageView
+                android:id="@+id/playlist_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/baseline_playlist_play_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:padding="4dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/audioVisualizerWrapper"
+            app:layout_constraintVertical_bias="0">
+
+            <com.chibde.visualizer.BarVisualizer
+                android:id="@+id/visualizer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
