@@ -1,6 +1,7 @@
 package com.android.dev.prof.musicapp
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.android.dev.prof.musicapp.databinding.SongRowItemBinding
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
+import com.google.android.exoplayer2.Player
 import java.text.DecimalFormat
 
 class SongAdapter(val context: Context, var songList: List<Song>, val exoPlayer: ExoPlayer,
@@ -43,6 +45,7 @@ class SongAdapter(val context: Context, var songList: List<Song>, val exoPlayer:
         }
 
         holder.itemView.setOnClickListener{
+            context.startService(Intent(context.applicationContext, PlayerService::class.java))
             if (!exoPlayer.isPlaying){
                 exoPlayer.setMediaItems(getMediaItems(), position, 0)
             }else{

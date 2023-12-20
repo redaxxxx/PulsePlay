@@ -1,11 +1,16 @@
 package com.android.dev.prof.musicapp
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.IBinder
 import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
@@ -41,11 +46,13 @@ class MainActivity : AppCompatActivity() {
     private var repeatMode = 1
 
     private var defaultStatusColor: Int = 0
+
+    private var isBound = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        exoplayer = ExoPlayer.Builder(this).build()
+//        exoplayer = ExoPlayer.Builder(this).build()
 
         //save the status bar
         defaultStatusColor = window.statusBarColor
@@ -55,13 +62,36 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = resources.getString(R.string.app_name)
-        if (allPermissionGranted()){
-            loadSongs()
-        }else{
-            requestPermission()
+
+//        playerControls()
+
+        //bind to the player service, and do every thing after the binding
+        doBindService()
+
+    }
+
+    private fun doBindService() {
+        val intent = Intent(this, PlayerService::class.java)
+        bindService(intent, playerServiceConnection, Context.BIND_AUTO_CREATE)
+    }
+
+    private val playerServiceConnection = object : ServiceConnection{
+        override fun onServiceConnected(p0: ComponentName?, iBinder: IBinder?) {
+            //get service instance
+            val binder: PlayerService.ServiceBinder = iBinder as PlayerService.ServiceBinder
+            exoplayer = binder.getPlayerService().exoPlayer
+            isBound = true
+            if (allPermissionGranted()){
+                loadSongs()
+            }else{
+                requestPermission()
+            }
+            playerControls()
         }
 
-        playerControls()
+        override fun onServiceDisconnected(p0: ComponentName?) {
+        }
+
     }
 
     private fun playerControls(){
@@ -333,10 +363,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (exoplayer.isPlaying){
-            exoplayer.stop()
+        if (isBound){
+            unbindService(playerServiceConnection)
+            isBound = false
         }
-        exoplayer.release()
     }
 
     private fun searchSong(searchView: SearchView) {
