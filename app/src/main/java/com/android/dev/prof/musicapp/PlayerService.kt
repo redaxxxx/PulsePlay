@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -20,11 +21,12 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import java.util.Objects
+import com.android.dev.prof.musicapp.PlayerService
 
-class PlayerService : Service() {
+class PlayerService() : Service() {
 
     //member
-    val serviceBinder: IBinder = ServiceBinder()
+    private val serviceBinder: IBinder = ServiceBinder()
 
     //exoplayer
     lateinit var exoPlayer: ExoPlayer
@@ -32,10 +34,12 @@ class PlayerService : Service() {
 
 
     //class binder for clients
-    class ServiceBinder : Binder() {
-        fun getPlayerService(): PlayerService{
-            return PlayerService()
-        }
+    inner class ServiceBinder : Binder() {
+        fun getPlayerService(): PlayerService = this@PlayerService
+    }
+
+    fun getMediaPlayer(): ExoPlayer{
+        return exoPlayer
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -139,7 +143,7 @@ class PlayerService : Service() {
             imageView.setImageURI(player.currentMediaItem?.mediaMetadata?.artworkUri)
 
             //get view drawable
-            var bitmapDrawable = imageView.drawable as BitmapDrawable
+            var bitmapDrawable = imageView.drawable as? BitmapDrawable
             if (bitmapDrawable == null){
                 bitmapDrawable = ContextCompat.getDrawable(applicationContext, R.drawable.art_mc) as BitmapDrawable
             }

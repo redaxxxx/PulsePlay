@@ -59,4 +59,6 @@ dependencies {
     implementation("androidx.palette:palette-ktx:1.0.0")
 
     implementation ("de.hdodenhof:circleimageview:3.1.0")
+
+    implementation ("jp.wasabeef:blurry:4.0.1")
 }

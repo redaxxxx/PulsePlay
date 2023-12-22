@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -26,12 +27,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.android.dev.prof.musicapp.databinding.ActivityMainBinding
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import jp.wasabeef.blurry.Blurry
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,28 +68,35 @@ class MainActivity : AppCompatActivity() {
 
 //        playerControls()
 
+
         //bind to the player service, and do every thing after the binding
         doBindService()
 
     }
 
-    private fun doBindService() {
+    fun doBindService() {
         val intent = Intent(this, PlayerService::class.java)
         bindService(intent, playerServiceConnection, Context.BIND_AUTO_CREATE)
+        startService(intent)
     }
 
-    private val playerServiceConnection = object : ServiceConnection{
+    val playerServiceConnection = object : ServiceConnection{
         override fun onServiceConnected(p0: ComponentName?, iBinder: IBinder?) {
+
             //get service instance
             val binder: PlayerService.ServiceBinder = iBinder as PlayerService.ServiceBinder
-            exoplayer = binder.getPlayerService().exoPlayer
+            exoplayer = binder.getPlayerService().getMediaPlayer()
             isBound = true
+
+            Log.d("MusicApp", "exoplayer in Main $exoplayer.toString()")
+
+            playerControls()
+
             if (allPermissionGranted()){
                 loadSongs()
             }else{
                 requestPermission()
             }
-            playerControls()
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
@@ -133,6 +143,12 @@ class MainActivity : AppCompatActivity() {
 
                     //load the artwork animation
                     binding.playerView.artworkView.animation = loadRotation()
+
+                    //set Audio Visualizer
+                    activateAudioVisualizer()
+
+                    //update player view colors
+                    updatePlayerColors()
 
                     if (!exoplayer.isPlaying){
                         exoplayer.play()
@@ -243,6 +259,8 @@ class MainActivity : AppCompatActivity() {
             binding.playBtn.setImageResource(R.drawable.baseline_pause_24)
             binding.playerView.artworkView.startAnimation(loadRotation())
         }
+
+        updatePlayerColors()
     }
 
     private fun skipToNext(){
@@ -300,6 +318,51 @@ class MainActivity : AppCompatActivity() {
         }
 
         return time
+    }
+
+    private fun activateAudioVisualizer(){
+
+    }
+    private fun updatePlayerColors(){
+        if (binding.playerView.root.visibility == View.GONE){
+            return
+        }
+
+        var bitmapDrawable = binding.playerView.artworkView.drawable as? BitmapDrawable
+        if (bitmapDrawable == null){
+            bitmapDrawable = ContextCompat.getDrawable(this, R.drawable.art_mc) as BitmapDrawable
+        }
+
+        assert(bitmapDrawable != null)
+        val bitmap = bitmapDrawable.bitmap
+
+        //set bitmap to blur imageView
+//        binding.playerView.blurImageView.setImageBitmap(bitmap)
+        Blurry.with(this).from(bitmap).into(binding.playerView.blurImageView)
+
+        Palette.from(bitmap).generate {
+            if (it != null){
+                var swatch: Palette.Swatch? = it.darkVibrantSwatch
+                if (swatch == null){
+                    swatch = it.mutedSwatch
+                    if (swatch == null){
+                        swatch = it.dominantSwatch
+                    }
+                }
+                assert(swatch != null)
+
+                val titleTextColor = swatch!!.titleTextColor
+                val bodyTextColor = swatch.bodyTextColor
+                val rgbColor = swatch.rgb
+
+                //set colors to status and navigation views
+                window.statusBarColor = rgbColor
+                window.navigationBarColor = rgbColor
+
+                binding.homeSongName.setTextColor(titleTextColor)
+
+            }
+        }
     }
 
     private fun showPlayerView() {
@@ -367,6 +430,13 @@ class MainActivity : AppCompatActivity() {
             unbindService(playerServiceConnection)
             isBound = false
         }
+    }
+
+    override fun onBackPressed() {
+        if (binding.playerView.root.visibility == View.VISIBLE){
+            exitPlayerView()
+        }
+        else super.onBackPressed()
     }
 
     private fun searchSong(searchView: SearchView) {

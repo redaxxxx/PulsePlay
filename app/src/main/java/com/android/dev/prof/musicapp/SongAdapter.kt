@@ -16,7 +16,7 @@ import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.Player
 import java.text.DecimalFormat
 
-class SongAdapter(val context: Context, var songList: List<Song>, val exoPlayer: ExoPlayer,
+class SongAdapter(val context: Context, var songList: List<Song>, var exoPlayer: ExoPlayer,
                   val playerView: View):
     Adapter<SongAdapter.ViewHolder>() {
 
@@ -46,6 +46,7 @@ class SongAdapter(val context: Context, var songList: List<Song>, val exoPlayer:
 
         holder.itemView.setOnClickListener{
             context.startService(Intent(context.applicationContext, PlayerService::class.java))
+
             if (!exoPlayer.isPlaying){
                 exoPlayer.setMediaItems(getMediaItems(), position, 0)
             }else{
