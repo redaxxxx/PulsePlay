@@ -5,16 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import android.util.Log
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
@@ -29,7 +26,6 @@ import androidx.core.graphics.ColorUtils
 import androidx.databinding.DataBindingUtil
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.android.dev.prof.musicapp.databinding.ActivityMainBinding
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -74,13 +70,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun doBindService() {
+    private fun doBindService() {
         val intent = Intent(this, PlayerService::class.java)
         bindService(intent, playerServiceConnection, Context.BIND_AUTO_CREATE)
         startService(intent)
     }
 
-    val playerServiceConnection = object : ServiceConnection{
+    private val playerServiceConnection = object : ServiceConnection{
         override fun onServiceConnected(p0: ComponentName?, iBinder: IBinder?) {
 
             //get service instance
@@ -224,25 +220,27 @@ class MainActivity : AppCompatActivity() {
 
         //repeat mode
         binding.playerView.repeatBtn.setOnClickListener {
-            if (repeatMode == 1){
-                //repeat one
-                exoplayer.repeatMode = ExoPlayer.REPEAT_MODE_ONE
-                repeatMode = 2
+            when (repeatMode) {
+                1 -> {
+                    //repeat one
+                    exoplayer.repeatMode = ExoPlayer.REPEAT_MODE_ONE
+                    repeatMode = 2
 
-                binding.playerView.repeatBtn.setImageResource(R.drawable.baseline_repeat_one_24)
-            }
-            else if (repeatMode == 2){
-                //repeat all
-                exoplayer.shuffleModeEnabled = true
-                exoplayer.repeatMode = ExoPlayer.REPEAT_MODE_ALL
-                binding.playerView.repeatBtn.setImageResource(R.drawable.baseline_shuffle_24)
-            }
-            else if (repeatMode == 3){
-                //repeat all
-                exoplayer.repeatMode = ExoPlayer.REPEAT_MODE_ALL
-                exoplayer.shuffleModeEnabled = false
-                repeatMode = 1
-                binding.playerView.repeatBtn.setImageResource(R.drawable.baseline_repeat_24)
+                    binding.playerView.repeatBtn.setImageResource(R.drawable.baseline_repeat_one_24)
+                }
+                2 -> {
+                    //repeat all
+                    exoplayer.shuffleModeEnabled = true
+                    exoplayer.repeatMode = ExoPlayer.REPEAT_MODE_ALL
+                    binding.playerView.repeatBtn.setImageResource(R.drawable.baseline_shuffle_24)
+                }
+                3 -> {
+                    //repeat all
+                    exoplayer.repeatMode = ExoPlayer.REPEAT_MODE_ALL
+                    exoplayer.shuffleModeEnabled = false
+                    repeatMode = 1
+                    binding.playerView.repeatBtn.setImageResource(R.drawable.baseline_repeat_24)
+                }
             }
         }
     }
@@ -274,7 +272,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadRotation(): Animation? {
+    private fun loadRotation(): Animation {
         val rotateAnimation = RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
             0.5f)
 
@@ -306,22 +304,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getReadableTime(duration: Int): String {
-        var time: String
+        val time: String
         val hr = duration / (1000*60*60)
         val min = (duration % (1000*60*60)) / (1000*60)
         val sec = (((duration % (1000*60*60)) % (1000*60*60)) % (1000*60)) / 1000
 
-        if (hr < 1){
-            time = "$min:$sec"
+        time = if (hr < 1){
+            "$min:$sec"
         }else {
-            time = "$hr:$min:$sec"
+            "$hr:$min:$sec"
         }
 
         return time
     }
 
     private fun activateAudioVisualizer(){
-
+        binding.playerView.visualizer.setColor(ContextCompat.getColor(this, R.color.secondary_color))
+        binding.playerView.visualizer.setDensity(10F)
+        binding.playerView.visualizer.setPlayer(exoplayer.audioSessionId)
     }
     private fun updatePlayerColors(){
         if (binding.playerView.root.visibility == View.GONE){
@@ -333,7 +333,6 @@ class MainActivity : AppCompatActivity() {
             bitmapDrawable = ContextCompat.getDrawable(this, R.drawable.art_mc) as BitmapDrawable
         }
 
-        assert(bitmapDrawable != null)
         val bitmap = bitmapDrawable.bitmap
 
         //set bitmap to blur imageView
@@ -360,6 +359,17 @@ class MainActivity : AppCompatActivity() {
                 window.navigationBarColor = rgbColor
 
                 binding.homeSongName.setTextColor(titleTextColor)
+
+//                binding.playerView.arrowBackBtn.setBackgroundColor(titleTextColor)
+                binding.playerView.startProgress.setTextColor(bodyTextColor)
+                binding.playerView.endProgress.setTextColor(bodyTextColor)
+
+//                binding.playerView.repeatBtn.setBackgroundColor(bodyTextColor)
+//                binding.playerView.skipNextBtn.setBackgroundColor(bodyTextColor)
+//                binding.playerView.skipPreviousBtn.setBackgroundColor(bodyTextColor)
+//                binding.playerView.playlistBtn.setBackgroundColor(bodyTextColor)
+//                binding.playerView.playPauseBtn.setBackgroundColor(titleTextColor)
+
 
             }
         }
@@ -432,6 +442,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (binding.playerView.root.visibility == View.VISIBLE){
             exitPlayerView()
