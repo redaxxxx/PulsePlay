@@ -1,6 +1,7 @@
 simple and friendly Play Music App 
 
 Features:
+
 1-External Storage Access
 2-Media Playback Controls
 3-Offline Mode
@@ -8,6 +9,7 @@ Features:
 5-Background Playback
 
 Libraries:
+
 1-ExoPlayer:
 2-MediaStore API
 3-Android MediaPlayer API
